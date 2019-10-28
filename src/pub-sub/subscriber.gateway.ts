@@ -2,7 +2,7 @@ import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSo
 import { Server, Socket } from 'socket.io';
 import { MessageDto } from '../utils/dto/message.dto';
 
-@WebSocketGateway(Number(process.env.PORT) || 8080)
+@WebSocketGateway(Number(process.env.WS_PORT) || 8080)
 export class SubscriberGateway {
   @WebSocketServer()
   server: Server;
