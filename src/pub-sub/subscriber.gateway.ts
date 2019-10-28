@@ -5,7 +5,7 @@ import { LoggerService } from '../logger/logger.service';
 
 const PORT = Number(process.env.WS_PORT) || 8080;
 
-@WebSocketGateway(PORT)
+@WebSocketGateway()
 export class SubscriberGateway implements OnGatewayInit {
   @WebSocketServer()
   server: Server;
