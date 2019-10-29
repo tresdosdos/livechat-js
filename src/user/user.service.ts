@@ -4,7 +4,7 @@ import { UserRequestDto } from '../utils/dto/user-request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../db/models';
 import { Repository } from 'typeorm';
-import { UserExistsError } from '../utils/errors';
+import { InvalidCredentialsError, UserExistsError } from '../utils/errors';
 
 const SALT_FACTOR = 10;
 
@@ -18,11 +18,29 @@ export class UserService {
     const { username, password } = userData;
     await this.isUserExists(username);
 
-    const hashedPassword = await this.encryptPassword(password);
+    const hashedPassword = await this.hashPassword(password);
     const encryptedData = { username, password: hashedPassword };
 
     const user = this.userRepo.create(encryptedData);
     return  this.userRepo.save(user);
+  }
+
+  public async login(userData: UserRequestDto) {
+    const { username, password } = userData;
+
+    const foundUser = await this.userRepo.findOne({username});
+
+    if (!foundUser) {
+      throw new InvalidCredentialsError();
+    }
+
+    const isPassswordValid = await bcrypt.compare(password, foundUser.password);
+
+    if (!isPassswordValid) {
+      throw new InvalidCredentialsError();
+    }
+
+    return foundUser;
   }
 
   private async isUserExists(username: string) {
@@ -33,7 +51,7 @@ export class UserService {
     }
   }
 
-  private async encryptPassword(password: string): Promise<string> {
+  private async hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(SALT_FACTOR);
 
     return bcrypt.hash(password, salt);
