@@ -3,8 +3,6 @@ import { Server, Socket } from 'socket.io';
 import { MessageDto } from '../utils/dto/message.dto';
 import { LoggerService } from '../logger/logger.service';
 
-const PORT = Number(process.env.WS_PORT) || 8080;
-
 @WebSocketGateway()
 export class SubscriberGateway implements OnGatewayInit {
   @WebSocketServer()
@@ -23,6 +21,6 @@ export class SubscriberGateway implements OnGatewayInit {
   }
 
   afterInit(server: Server) {
-    this.logger.log(`Web sockets started at port ${PORT}`);
+    this.logger.log('Web sockets started');
   }
 }

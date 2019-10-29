@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class LoggerService {
   public log(text: string) {
-    console.log(text);
+    Logger.log(text);
   }
 }
