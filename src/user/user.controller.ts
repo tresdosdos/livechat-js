@@ -1,10 +1,9 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
-import { UserRequestDto } from '../utils/dto/user-request.dto';
-import { UserService } from './user.service';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { plainToClass } from 'class-transformer';
-import { UserResponseDto } from '../utils/dto/UserResponseDto';
+import { UserRequestDto, UserResponseDto } from '../utils/dto';
+import { UserService } from './user.service';
 import { JwtService } from '../utils/jwt.service';
-import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -25,9 +24,18 @@ export class UserController {
   }
 
   @Post('login')
-  async login(@Body() userData: UserRequestDto) {
+  async login(@Body() userData: UserRequestDto, @Res() res: Response) {
     const user = await this.userService.login(userData);
+    const token = this.jwtService.generateToken(user.id);
 
-    return plainToClass(UserResponseDto, user, {strategy: 'excludeAll'});
+    const userDto = plainToClass(UserResponseDto, user, {strategy: 'excludeAll'});
+
+    res.setHeader('Authorization', token);
+    res.status(200).send(userDto);
+  }
+
+  @Get()
+  getUser(@Req() req: Request) {
+    return plainToClass(UserResponseDto, this.userService.getData(req.headers.authorization));
   }
 }

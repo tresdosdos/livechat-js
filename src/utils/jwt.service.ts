@@ -14,7 +14,7 @@ export class JwtService {
     });
   }
 
-  public verifyAndDecodeToken(token: string): object {
+  public verifyAndDecodeToken<T = object>(token: string): T {
     try {
       return jwt.verify(token, this.config.JWT_SECRET);
     } catch (err) {

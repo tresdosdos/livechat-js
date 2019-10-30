@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { UserEntity } from './user.entity';
+import { RoomUserMessageEntity } from './room-user-message.entity';
 
 @Entity('room')
 export class RoomEntity {
@@ -9,6 +9,6 @@ export class RoomEntity {
   @Column()
   name: string;
 
-  @OneToMany(() => UserEntity, (user) => user.room)
-  users: UserEntity[];
+  @OneToMany(() => RoomUserMessageEntity, (rume) => rume.room)
+  userMessages: RoomUserMessageEntity[];
 }

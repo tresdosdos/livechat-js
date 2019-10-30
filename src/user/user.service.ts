@@ -1,10 +1,11 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
-import { UserRequestDto } from '../utils/dto/user-request.dto';
+import { UserRequestDto } from '../utils/dto/request/user-request.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../db/models';
 import { Repository } from 'typeorm';
 import { InvalidCredentialsError, UserExistsError } from '../utils/errors';
+import { JwtService } from '../utils/jwt.service';
 
 const SALT_FACTOR = 10;
 
@@ -12,6 +13,7 @@ const SALT_FACTOR = 10;
 export class UserService {
   constructor(
     @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
+    private jwtService: JwtService,
   ) {}
 
   public async register(userData: UserRequestDto) {
@@ -37,6 +39,18 @@ export class UserService {
     const isPassswordValid = await bcrypt.compare(password, foundUser.password);
 
     if (!isPassswordValid) {
+      throw new InvalidCredentialsError();
+    }
+
+    return foundUser;
+  }
+
+  public async getData(token: string) {
+    const userData = this.jwtService.verifyAndDecodeToken(token);
+
+    const foundUser = await this.userRepo.findOne(userData);
+
+    if (!foundUser) {
       throw new InvalidCredentialsError();
     }
 

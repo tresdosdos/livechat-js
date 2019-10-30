@@ -1,7 +1,8 @@
 import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { UsePipes, ValidationPipe } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { MessageDto } from '../utils/dto/message.dto';
 import { LoggerService } from '../logger/logger.service';
+import { BaseSocketDto } from '../utils/dto';
 
 @WebSocketGateway()
 export class SubscriberGateway implements OnGatewayInit {
@@ -11,13 +12,14 @@ export class SubscriberGateway implements OnGatewayInit {
   constructor(private logger: LoggerService) {}
 
   @SubscribeMessage('message')
+  @UsePipes(new ValidationPipe({transform: true}))
   handleMessage(
-    @MessageBody() data: MessageDto,
+    @MessageBody() data: BaseSocketDto<{message: string}>,
     @ConnectedSocket() client: Socket,
-  ): string {
+  ): BaseSocketDto {
     console.log(data);
 
-    return 'Hello world!';
+    return data;
   }
 
   afterInit(server: Server) {

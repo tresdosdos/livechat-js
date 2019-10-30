@@ -1,6 +1,5 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
-import { MessageEntity } from './message.entity';
-import { RoomEntity } from './room.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { RoomUserMessageEntity } from './room-user-message.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -13,9 +12,6 @@ export class UserEntity {
   @Column()
   password: string;
 
-  @OneToMany(() => MessageEntity, (message) => message.user)
-  messages: MessageEntity[];
-
-  @ManyToOne(() => RoomEntity, (room) => room.users)
-  room: RoomEntity;
+  @OneToMany(() => RoomUserMessageEntity, (rume) => rume.user)
+  roomsMessages: RoomUserMessageEntity[];
 }
