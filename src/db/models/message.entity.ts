@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { RoomUserMessageEntity } from './room-user-message.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { RoomEntity } from './room.entity';
+import { UserEntity } from './user.entity';
 
 @Entity('message')
 export class MessageEntity {
@@ -9,6 +10,9 @@ export class MessageEntity {
   @Column()
   text: string;
 
-  @OneToMany(() => RoomUserMessageEntity, (rume) => rume.message)
-  roomUsers: RoomUserMessageEntity[];
+  @ManyToOne(() => RoomEntity, (room) => room.messages)
+  room: RoomEntity;
+
+  @ManyToOne(() => UserEntity, (user) => user.messages)
+  user: UserEntity;
 }

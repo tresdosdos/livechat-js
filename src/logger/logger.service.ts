@@ -5,4 +5,8 @@ export class LoggerService {
   public log(text: string) {
     Logger.log(text);
   }
+
+  public error(text: string) {
+    Logger.error(text);
+  }
 }

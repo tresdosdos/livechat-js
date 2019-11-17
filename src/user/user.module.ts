@@ -10,6 +10,7 @@ import { JwtMiddleware } from './jwt.middleware';
   imports: [TypeOrmModule.forFeature([UserEntity]), UtilsModule],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
