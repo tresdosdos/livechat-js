@@ -50,7 +50,7 @@ export class SubscriberGateway implements OnGatewayInit, OnGatewayConnection {
 
   @SubscribeMessage('room/join')
   async joinRoom(
-    @MessageBody() req,
+    @MessageBody() req: IJwtGuardProps & {id: string},
     @ConnectedSocket() client: Socket,
   ) {
     const messages = await this.publisherService.getMessages(req.id);
@@ -61,6 +61,18 @@ export class SubscriberGateway implements OnGatewayInit, OnGatewayConnection {
       id: req.user.id,
       roomId: req.id,
       text: 'joined this room',
+    });
+  }
+
+  @SubscribeMessage('room/typing')
+  async roomTyping(
+    @MessageBody() req: IJwtGuardProps & {id: string},
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.server.emit(`room/${req.id}/typing`, {
+      user: req.user,
+      roomId: req.id,
+      text: 'is typing',
     });
   }
 
