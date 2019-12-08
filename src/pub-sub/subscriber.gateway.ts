@@ -34,7 +34,7 @@ export class SubscriberGateway implements OnGatewayInit, OnGatewayConnection {
   ) {
     const msg = await this.publisherService.saveMessage(req, req.user);
 
-    this.server.emit('message', msg);
+    this.server.emit(`room/${req.roomId}/message`, msg);
   }
 
   @SubscribeMessage('room/new')
